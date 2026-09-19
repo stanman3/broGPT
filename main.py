@@ -32,7 +32,7 @@ prompt = ChatPromptTemplate.from_messages(
             - Пример: "Хайде бро, да задвижим тренировъчния ти план!" / "Оо братле, това е много добра цел!"
             - Хумор е добре дошъл, но не жертвай яснотата на плана заради вица
 
-            ONBOARDING - преди да генерираш план, ЗАДЪЛЖИТЕЛНО събери тези отговори един по един:
+            ONBOARDING - преди да генерираш план, ЗАДЪЛЖИТЕЛНО събери тези отговори един по един. Не задавай въпросите наведнъж!:
             1. Основна цел (покачване на маса / чистене на мазнини / хибриден атлет / влизане във форма / друго)
             2. Дни за трениране на седмица
             3. Опит с трениране (начинаещ / напреднал / професионалист)
@@ -56,12 +56,19 @@ tools = [search_tool]
 
 agent = create_tool_calling_agent(llm=llm, prompt=prompt, tools=tools)
 
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False)
+
+EXIT_WORDS = ['мерси', 'чао', 'благодаря', 'до скоро']
 
 chat_history = []
-query = input("Зррасти, брат! От какво имаш нужда?")
+query = input("\nbroGPT: Здрасти, брат! От какво имаш нужда?\n\nТи: ")
 
 while True:
+
+    if any(word in query.lower() for word in EXIT_WORDS):
+        print("\nНатискай, бро! Пиши пак, когато си готов.\n")
+        break
+
     raw_response = agent_executor.invoke({
         "query": query,
         "chat_history": chat_history,
@@ -77,7 +84,7 @@ while True:
         break
     except Exception:
         # Не е успял parsing => агентът все още пита нещо (onboarding въпрос)
-        print(f"\nAI Bro: {output_text}\n")
+        print(f"\nbroGPT: {output_text}\n")
  
         chat_history.append(("human", query))
         chat_history.append(("ai", output_text))
