@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
 // Point this at your FastAPI backend (adjust for dev vs. production).
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 /**
  * broGPT chat UI.
