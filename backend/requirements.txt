@@ -7,3 +7,4 @@ python-dotenv
 duckduckgo-search
 fastapi
 uvicorn
+ddgs
